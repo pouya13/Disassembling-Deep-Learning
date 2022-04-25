@@ -250,16 +250,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm+all
-log
-*.pth
-*.jar
-files
-video_creation_server.postman_collection.json
-/=2.4.1
-*.zip
-Tagging/check_points
-Tagging/resources
-*.pt
-EmotionRecognition/check_points/
 
