@@ -14,7 +14,7 @@ class MyDataset(Dataset):
 		self.group = group
 		self.data_path = data_path
 		self.labels_path = labels_path
-		self.stack_number
+		self.stack_number = stack_number
 
 		self.data_files = os.listdir(data_path)
 		self.label_files = os.listdir(labels_path)
@@ -85,12 +85,12 @@ class MyDataset(Dataset):
 		x = []
 		y = []
 		for j in range(int(max(labels)+1)):
-		    z = []
-		    for i in range(len(data)):
-		        if labels[i] == j:
-					_, _, Zxx = signal.stft(train_data[i], 5e8, nperseg=100)
+			z = []
+			for i in range(len(data)):
+				if labels[i] == j:
+					_, _, Zxx = signal.stft(data[i], 5e8, nperseg=100)
 					z.append(np.abs(Zxx))
-		        if len(z) == self.stack_number:
+				if len(z) == self.stack_number:
 					x.append(z)
 					y.append(labels[i])
 					del z
@@ -104,13 +104,9 @@ class MyDataset(Dataset):
 	    return (len(self.x))
 
 	def __getitem__(self, i):
-	    data = self.x[i]
-	    data = np.asarray(data, dtype=np.float64).reshape(50,51*5)
-	    
-	    if self.transforms:
-	        data = self.transforms(data)
-	    
-	#         y = np.zeros((self.dim, 1), dtype=np.float64)
-	#         y = self.y[i] * np.ones((5))
-	        
-	    return (data, self.y[i])
+		data = self.data[i]
+		data = np.asarray(data, dtype=np.float64).reshape(self.stack_number,-1)
+
+		if self.transforms:
+			data = self.transforms(data)
+		return (data, self.labels[i])
