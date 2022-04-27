@@ -10,10 +10,11 @@ from torch.utils.data import Dataset
 
 
 class MyDataset(Dataset):
-	def __init__(self, data_path, labels_path, group, number_of_datafiles=2, transforms=None):
+	def __init__(self, data_path, labels_path, group, number_of_datafiles=2, stack_number=50, transforms=None):
 		self.group = group
 		self.data_path = data_path
 		self.labels_path = labels_path
+		self.stack_number
 
 		self.data_files = os.listdir(data_path)
 		self.label_files = os.listdir(labels_path)
@@ -62,7 +63,7 @@ class MyDataset(Dataset):
 			labels = np.hstack((labels, labels_temp))
 			del data_temp, labels_temp
 
-		self.group_selection(data_temp, labels_temp)
+		self.group_selection(data, labels)
 
 	def group_selection(self, data, labels):
 		x = []
@@ -72,7 +73,33 @@ class MyDataset(Dataset):
 				if labels[i] in self.groups[self.group]:
 					x.append(data[i])
 					y.append(self.groups[self.group].index(labels[i]))
-         
+
+		data = x
+		labels = y
+
+		del x, y
+
+		self.pre_process(data,labels)
+
+	def pre_process(self, data, labels):
+		x = []
+		y = []
+		for j in range(int(max(labels)+1)):
+		    z = []
+		    for i in range(len(data)):
+		        if labels[i] == j:
+					_, _, Zxx = signal.stft(train_data[i], 5e8, nperseg=100)
+					z.append(np.abs(Zxx))
+		        if len(z) == self.stack_number:
+					x.append(z)
+					y.append(labels[i])
+					del z
+					z = []
+		self.data = x
+		self.labels = y
+
+		del x, y, Zxx, data, labels
+
 	def __len__(self):
 	    return (len(self.x))
 
