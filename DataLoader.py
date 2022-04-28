@@ -74,12 +74,17 @@ class MyDataset(Dataset):
 					x.append(data[i])
 					y.append(self.groups[self.group].index(labels[i]))
 
-		data = x
-		labels = y
+			data = x
+			labels = y
 
-		del x, y
+			del x, y
 
-		self.pre_process(data,labels)
+			self.pre_process(data,labels)
+
+		elif self.group == 'All':
+			self.pre_process(data, labels)
+		else:
+			raise Exception("Please, select a proper group!")
 
 	def pre_process(self, data, labels):
 		x = []
